@@ -140,7 +140,38 @@
 }
 
 - (NSString *)description {
-    return [self text];
+    int nodeType = (node_ ? (int)node_->type : -1);
+    return [NSString stringWithFormat:@"%@ %p: {type:%d name:%@ xml:\"%@\"}",
+            [self class], self, nodeType, [self tag], [self XMLString]];
+}
+
+- (NSString *)XMLString {
+    NSString *str = nil;
+    
+    if (node_ != NULL) {
+        
+        xmlBufferPtr buff = xmlBufferCreate();
+        if (buff) {
+            
+            xmlDocPtr doc = NULL;
+            int level = 0;
+            int format = 0;
+            
+            int result = xmlNodeDump(buff, doc, node_, level, format);
+            
+            if (result > -1) {
+                str = [[NSString alloc] initWithBytes:(xmlBufferContent(buff))
+                                                length:(xmlBufferLength(buff))
+                                              encoding:NSUTF8StringEncoding];
+            }
+            xmlBufferFree(buff);
+        }
+    }
+    
+    // remove leading and trailing whitespace
+    NSCharacterSet *ws = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+    NSString *trimmed = [str stringByTrimmingCharactersInSet:ws];
+    return trimmed;
 }
 
 #pragma mark -

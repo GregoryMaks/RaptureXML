@@ -134,7 +134,17 @@ And remember, you can also test attributes using XPath as well. Here's how you c
 		NSLog(@"Player #5: %@", [player child:@"name"]);
 	}];    
 
-Note that you can only use XPath from the document root and it won't matter what RXMLElement you have.  If you have a derived RXMLElement, you can still build from the document root. If you're not familiar with XPath, you can use this [handy guide](http://www.w3schools.com/xpath/xpath_syntax.asp).
+Note that these methods let you use XPath from the document root only and it won't matter what RXMLElement you have.  If you have a derived RXMLElement, you can still build from the document root.
+
+Following method let you chose root node to use relative XPath expressions:
+
+	RXMLElement *playersXMLNode = [[rootXML childrenWithXPath:@"//players"] firstObject];
+
+	[playersXMLNode iterateWithXPath:@"./player" rootNode:playersXMLNode usingBlock: ^(RXMLElement *player) {
+		NSLog(@"Player: %@ (#%@)", [player child:@"name"], [player attribute:@"number"]);
+	}]; 
+
+If you're not familiar with XPath, you can use this [handy guide](http://www.w3schools.com/xpath/xpath_syntax.asp).
 
 # Namespaces #
 

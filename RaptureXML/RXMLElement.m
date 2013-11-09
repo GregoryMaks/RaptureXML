@@ -359,15 +359,23 @@
 }
 
 - (NSArray *)childrenWithRootXPath:(NSString *)xpath {
+    return [self childrenWithXPath:xpath rootNode:NULL];
+}
+
+- (NSArray *)childrenWithXPath:(NSString *)xpath rootNode:(RXMLElement *)rootNode {
     // check for a query
     if (!xpath) {
         return [NSArray array];
     }
-
-    xmlXPathContextPtr context = xmlXPathNewContext([self.xmlDoc doc]);
     
+    xmlXPathContextPtr context = xmlXPathNewContext([self.xmlDoc doc]);
     if (context == NULL) {
 		return nil;
+    }
+    // set root node, if none is set, document is used as root
+    if (rootNode != nil)
+    {
+        context->node = rootNode->node_;
     }
     
     xmlXPathObjectPtr object = xmlXPathEvalExpression((xmlChar *)[xpath cStringUsingEncoding:NSUTF8StringEncoding], context);
@@ -391,7 +399,7 @@
 	}
     
     xmlXPathFreeObject(object);
-    xmlXPathFreeContext(context); 
+    xmlXPathFreeContext(context);
     
     return resultNodes;
 }
@@ -473,6 +481,11 @@
 
 - (void)iterateWithRootXPath:(NSString *)xpath usingBlock:(void (^)(RXMLElement *))blk {
     NSArray *children = [self childrenWithRootXPath:xpath];
+    [self iterateElements:children usingBlock:blk];
+}
+
+- (void)iterateWithXPath:(NSString *)xpath rootNode:(RXMLElement *)rootNode usingBlock:(void (^)(RXMLElement *))blk {
+    NSArray *children = [self childrenWithXPath:xpath rootNode:rootNode];
     [self iterateElements:children usingBlock:blk];
 }
 

@@ -13,6 +13,7 @@
     NSString *attributedXML_;
     NSString *interruptedTextXML_;
     NSString *cdataXML_;
+    NSString *multipleNestedXML_;
 }
 
 @end
@@ -37,6 +38,20 @@
     </shapes>";
     interruptedTextXML_ = @"<top><a>this</a>is<a>interrupted</a>text<a></a></top>";
     cdataXML_ = @"<top><![CDATA[this]]><![CDATA[is]]><![CDATA[cdata]]></top>";
+    
+    multipleNestedXML_ = @"\
+    <root>\
+        <element1>\
+            <element2 name='A1'/>\
+            <element2 name='B1'/>\
+            <element2 name='C1'/>\
+        </element1>\
+        <element1>\
+            <element2 name='A2'/>\
+            <element2 name='B2'/>\
+            <element2 name='C2'/>\
+        </element1>\
+    </root>";
 }
 
 - (void)testBasicPath {
@@ -63,6 +78,22 @@
     }];
     
     STAssertEquals(i, 1, nil);
+}
+
+- (void)testRelativePath {
+    RXMLElement *rxml = [RXMLElement elementFromXMLString:multipleNestedXML_ encoding:NSUTF8StringEncoding];
+    
+    NSArray *children = [rxml childrenWithXPath:@"/root" rootNode:NULL];
+    STAssertEquals(children.count, (NSUInteger)1, nil);
+    
+    RXMLElement *rootXML = [children firstObject];
+    STAssertEqualObjects([rootXML tag], @"root", nil);
+    
+    children = [rxml childrenWithXPath:@"./*" rootNode:rxml];
+    STAssertEquals(children.count, (NSUInteger)2, nil);
+    
+    children = [rxml childrenWithXPath:@"./element1/*" rootNode:rxml];
+    STAssertEquals(children.count, (NSUInteger)6, nil);
 }
 
 @end

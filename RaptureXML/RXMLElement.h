@@ -80,9 +80,11 @@
 - (NSArray *)children:(NSString *)tag;
 - (NSArray *)children:(NSString *)tag inNamespace:(NSString *)ns;
 - (NSArray *)childrenWithRootXPath:(NSString *)xpath;
+- (NSArray *)childrenWithXPath:(NSString *)xpath rootNode:(RXMLElement *)rootNode;
 
 - (void)iterate:(NSString *)query usingBlock:(void (^)(RXMLElement *))blk;
 - (void)iterateWithRootXPath:(NSString *)xpath usingBlock:(void (^)(RXMLElement *))blk;
+- (void)iterateWithXPath:(NSString *)xpath rootNode:(RXMLElement *)rootNode usingBlock:(void (^)(RXMLElement *))blk;
 - (void)iterateElements:(NSArray *)elements usingBlock:(void (^)(RXMLElement *))blk;
 
 @property (nonatomic, strong) RXMLDocHolder *xmlDoc;

@@ -404,6 +404,10 @@
     return resultNodes;
 }
 
+- (NSArray *)childrenWithXPath:(NSString *)xpath {
+    return [self childrenWithXPath:xpath rootNode:self];
+}
+
 #pragma mark -
 
 - (void)iterate:(NSString *)query usingBlock:(void (^)(RXMLElement *))blk {
@@ -487,6 +491,10 @@
 - (void)iterateWithXPath:(NSString *)xpath rootNode:(RXMLElement *)rootNode usingBlock:(void (^)(RXMLElement *))blk {
     NSArray *children = [self childrenWithXPath:xpath rootNode:rootNode];
     [self iterateElements:children usingBlock:blk];
+}
+
+- (void)iterateWithXPath:(NSString *)xpath usingBlock:(void (^)(RXMLElement *))blk {
+    return [self iterateWithXPath:xpath rootNode:self usingBlock:blk];
 }
 
 - (void)iterateElements:(NSArray *)elements usingBlock:(void (^)(RXMLElement *))blk {
